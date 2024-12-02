@@ -31,7 +31,7 @@ getData()
             ? rules.isDes.push(true)
             : rules.isDes.push(false);
 
-          diff == 0 || diff > 3 ? (rules.above = true) : null;
+          diff === 0 || diff > 3 ? (rules.above = true) : null;
         }
       });
       return rules;
@@ -59,6 +59,24 @@ getData()
 
       if (rules.above === false && checkIsAsc0rDes(rules.isAsc, rules.isDes)) {
         return true;
+      } else {
+        for (let i = 0; i < value.length; i++) {
+          const newRules: Model = {
+            above: false,
+            isAsc: [],
+            isDes: [],
+          };
+          const newValue = value.filter((_, index) => index !== i);
+
+          checkConstraints(newRules, newValue);
+
+          if (
+            newRules.above === false &&
+            checkIsAsc0rDes(newRules.isAsc, newRules.isDes)
+          ) {
+            return true;
+          }
+        }
       }
       return false;
     }
