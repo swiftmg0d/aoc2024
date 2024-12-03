@@ -22,10 +22,6 @@ Advent of Code is an annual coding challenge that runs from December 1st to Dece
 
 Here's my progress so far:
 
-## Progress
-
-Here's my progress so far:
-
 [![Day](https://badgen.net/badge/01/%E2%98%85%E2%98%85/green)](https://github.com/swiftmg0d/aoc2024/tree/master/src/day1)
 [![Day](https://badgen.net/badge/02/%E2%98%85%E2%98%85/green)](https://github.com/swiftmg0d/aoc2024/tree/master/src/day2)
 [![Day](https://badgen.net/badge/03/%E2%98%85%E2%98%85/green)](https://github.com/swiftmg0d/aoc2024/tree/master/src/day3)
