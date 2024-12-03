@@ -1,94 +1,88 @@
-import {getData} from '../input/input';
+import {input} from '../input/input';
 
-getData()
-  .then(value => {
-    const arr: Array<Array<string>> = value
-      .split('\n')
-      .map(value => value.split(' '));
+const arr: Array<Array<string>> = input
+  .split('\n')
+  .map(value => value.split(' '));
 
-    let sum = 0;
+let sum = 0;
 
-    interface Model {
-      above: boolean;
-      isAsc: Array<boolean>;
-      isDes: Array<boolean>;
+interface Model {
+  above: boolean;
+  isAsc: Array<boolean>;
+  isDes: Array<boolean>;
+}
+
+function checkConstraints(rules: Model, value: string[]) {
+  value.forEach((curr, index) => {
+    const nextNumber = index + 1;
+
+    if (nextNumber < value.length) {
+      const firstNumber = Number(curr);
+      const secondNumber = Number(value[nextNumber]);
+      const diff = Math.abs(firstNumber - secondNumber);
+
+      firstNumber > secondNumber
+        ? rules.isAsc.push(true)
+        : rules.isAsc.push(false);
+
+      firstNumber < secondNumber
+        ? rules.isDes.push(true)
+        : rules.isDes.push(false);
+
+      diff === 0 || diff > 3 ? (rules.above = true) : null;
     }
+  });
+  return rules;
+}
 
-    function checkConstraints(rules: Model, value: string[]) {
-      value.forEach((curr, index) => {
-        const nextNumber = index + 1;
+function checkIsAsc0rDes(isAsc: Array<boolean>, isDes: Array<boolean>) {
+  const rule1 =
+    isAsc.filter(value => value === true).length === isAsc.length &&
+    isDes.filter(value => value === false).length === isDes.length;
+  const rule2 =
+    isDes.filter(value => value === true).length === isDes.length &&
+    isAsc.filter(value => value === false).length === isAsc.length;
 
-        if (nextNumber < value.length) {
-          const firstNumber = Number(curr);
-          const secondNumber = Number(value[nextNumber]);
-          const diff = Math.abs(firstNumber - secondNumber);
+  return rule1 || rule2;
+}
 
-          firstNumber > secondNumber
-            ? rules.isAsc.push(true)
-            : rules.isAsc.push(false);
+function isSafe(value: string[]): boolean {
+  const rules: Model = {
+    above: false,
+    isAsc: [],
+    isDes: [],
+  };
 
-          firstNumber < secondNumber
-            ? rules.isDes.push(true)
-            : rules.isDes.push(false);
+  checkConstraints(rules, value);
 
-          diff === 0 || diff > 3 ? (rules.above = true) : null;
-        }
-      });
-      return rules;
-    }
-
-    function checkIsAsc0rDes(isAsc: Array<boolean>, isDes: Array<boolean>) {
-      const rule1 =
-        isAsc.filter(value => value === true).length === isAsc.length &&
-        isDes.filter(value => value === false).length === isDes.length;
-      const rule2 =
-        isDes.filter(value => value === true).length === isDes.length &&
-        isAsc.filter(value => value === false).length === isAsc.length;
-
-      return rule1 || rule2;
-    }
-
-    function isSafe(value: string[]): boolean {
-      const rules: Model = {
+  if (rules.above === false && checkIsAsc0rDes(rules.isAsc, rules.isDes)) {
+    return true;
+  } else {
+    for (let i = 0; i < value.length; i++) {
+      const newRules: Model = {
         above: false,
         isAsc: [],
         isDes: [],
       };
+      const newValue = value.filter((_, index) => index !== i);
 
-      checkConstraints(rules, value);
+      checkConstraints(newRules, newValue);
 
-      if (rules.above === false && checkIsAsc0rDes(rules.isAsc, rules.isDes)) {
+      if (
+        newRules.above === false &&
+        checkIsAsc0rDes(newRules.isAsc, newRules.isDes)
+      ) {
         return true;
-      } else {
-        for (let i = 0; i < value.length; i++) {
-          const newRules: Model = {
-            above: false,
-            isAsc: [],
-            isDes: [],
-          };
-          const newValue = value.filter((_, index) => index !== i);
-
-          checkConstraints(newRules, newValue);
-
-          if (
-            newRules.above === false &&
-            checkIsAsc0rDes(newRules.isAsc, newRules.isDes)
-          ) {
-            return true;
-          }
-        }
       }
-      return false;
     }
+  }
+  return false;
+}
 
-    arr.forEach(value => {
-      if (isSafe(value)) {
-        sum += 1;
-      }
-    });
+arr.forEach(value => {
+  if (isSafe(value)) {
+    sum += 1;
+  }
+});
 
-    console.log(sum);
-  })
-  .catch(err => {
-    console.error('Error reading file:', err);
-  });
+console.log(sum);
